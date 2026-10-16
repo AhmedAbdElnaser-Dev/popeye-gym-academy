@@ -86,8 +86,16 @@ def exercise_images():
 def load_content_with_node(content_js):
     """Evaluate the content files with node to get the real objects (they are plain JS literals)."""
     import subprocess
+    import tempfile
     script = "const CONTENT_UNITS = [];\n" + content_js + "\nprocess.stdout.write(JSON.stringify({ units: CONTENT_UNITS, practice: typeof PRACTICE_TEXTS === 'undefined' ? [] : PRACTICE_TEXTS }));"
-    result = subprocess.run(["node", "-e", script], capture_output=True, text=True, encoding="utf-8")
+    # far too big for a command line on Windows; node reads it from a temp file
+    with tempfile.NamedTemporaryFile("w", suffix=".cjs", delete=False, encoding="utf-8") as handle:
+        handle.write(script)
+        path = handle.name
+    try:
+        result = subprocess.run(["node", path], capture_output=True, text=True, encoding="utf-8")
+    finally:
+        Path(path).unlink(missing_ok=True)
     if result.returncode != 0:
         raise SystemExit(f"content files do not evaluate:\n{result.stderr}")
     return json.loads(result.stdout)

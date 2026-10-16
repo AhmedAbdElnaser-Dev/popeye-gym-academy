@@ -1,6 +1,6 @@
 // Service worker: the whole site is one HTML file, so cache the shell once and serve it first.
 // VERSION is stamped by build.py from the page's content hash; a new build = a new cache.
-const VERSION = "5e0facbb3a";
+const VERSION = "79a3902f8f";
 const CACHE = `popeye-academy-${VERSION}`;
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/maskable-512.png", "./icons/apple-touch-icon.png"];
 

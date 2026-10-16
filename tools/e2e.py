@@ -168,6 +168,24 @@ def run():
         page.wait_for_timeout(400)
         check("reset clears lessons but keeps the name", page.evaluate("Object.keys(progress().lessons).length") == 0 and page.evaluate("progress().name") == "أحمد")
 
+        # ---------- a muscle lesson: lit body map, animated figures, interactive overview ----------
+        muscle_lesson = page.evaluate("LESSON_INDEX.order.map((id) => lessonById(id).lesson).find((l) => l.muscles && l.muscles.length && l.hero)?.id")
+        if muscle_lesson:
+            page.goto(APP + f"#/lesson/{muscle_lesson}/read")
+            page.wait_for_timeout(500)
+            check("muscle lesson lights its muscles on the body map", page.locator(".read .bodymap .m.on").count() >= 2)
+            check("exercise figures carry two frames", page.locator(".read .ex .ex__frames img").count() >= 4 and page.evaluate("[...document.querySelectorAll('.read .ex__frames img')].every((img) => img.naturalWidth > 0)"))
+            check("English name shown small under the Arabic one", page.locator(".read .ex figcaption small").count() >= 1)
+            shot(page, "12-muscle-lesson")
+        overview = page.evaluate("LESSON_INDEX.order.map((id) => lessonById(id).lesson).find((l) => l.bodyMap)?.id")
+        if overview:
+            page.goto(APP + f"#/lesson/{overview}/read")
+            page.wait_for_timeout(500)
+            page.locator(".bodymap--live [data-muscle=chest]").first.click(force=True)
+            page.wait_for_timeout(150)
+            check("clicking a muscle on the overview map names it", "الصدر" in page.locator("[data-muscle-info]").inner_text())
+            check("every lesson's images resolve", page.evaluate("LESSON_INDEX.order.every((id) => { const l = lessonById(id).lesson; const refs = [l.hero?.ex, ...l.sections.flatMap((s) => (s.exercises || []).map((e) => e.ex))].filter(Boolean); return refs.every((r) => IMAGES[r] && IMAGES[r].length === 2); })"))
+
         # ---------- body map renders every muscle key ----------
         page.goto(APP + "#/")
         page.wait_for_timeout(300)
