@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#17110f">
+<title>Popeye Academy — اتعلم الجيم واكتب صح</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317110f'/%3E%3Crect y='50' width='64' height='6' fill='%23d3221a'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Arial Black,Arial,sans-serif' font-weight='900' font-size='34' fill='%23fff'%3EA%3C/text%3E%3C/svg%3E">
+{{PWA_HEAD}}
+<style>
+{{APP_CSS}}
+</style>
+</head>
+<body>
+<script id="progress-seed" type="application/json">null</script>
+<div class="app">
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <img class="brand__logo" id="brand-logo" alt="Popeye Gym">
+      <span class="brand__title">Academy<small>اتعلم الجيم واكتب صح</small></span>
+    </a>
+    <nav class="topnav" aria-label="التنقل">
+      <a href="#/" data-nav="home"><span data-icon="home"></span><span>الرئيسية</span></a>
+      <a href="#/practice" data-nav="practice"><span data-icon="keyboard"></span><span>تدريب حر</span></a>
+      <a href="#/settings" data-nav="settings"><span data-icon="settings"></span><span>الإعدادات</span></a>
+    </nav>
+    <span class="net-badge" id="net-badge" role="status" hidden>أوفلاين</span>
+  </header>
+  <main id="app" class="main" aria-live="polite"></main>
+  <footer class="foot">Popeye Gym · Factory Of Lions — <a href="#/about">عن الموقع</a></footer>
+</div>
+<dialog id="dialog" class="dialog"></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<input type="file" id="file-input" accept=".html,text/html" hidden>
+<script>
+"use strict";
+const PRISTINE_HTML = "<!doctype html>\n" + document.documentElement.outerHTML;
+const BANNER_SRC = "{{BANNER_SRC}}";
+const FONT_DATA = {{FONT_DATA}};
+const IMAGES = {{IMAGES}};
+const EXERCISE_INDEX = {{EXERCISE_INDEX}};
+const CONTENT_UNITS = [];
+{{CONTENT_JS}}
+{{APP_JS}}
+</script>
+</body>
+</html>
