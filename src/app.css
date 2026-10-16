@@ -330,7 +330,6 @@ kbd {
   border-radius: var(--radius);
   font-size: 1.7rem;
   line-height: 2.1;
-  letter-spacing: 0.01em;
   word-spacing: 0.12em;
   color: #6e6460;
   cursor: text;
@@ -358,16 +357,17 @@ kbd {
 }
 .typing--compact .typing__text { font-size: 2rem; text-align: center; min-height: 0; padding: 12px 18px; }
 .typing .w { display: inline-block; white-space: nowrap; }
-.typing .c { display: inline-block; min-width: 0.35em; border-radius: 4px; transition: color 0.1s, background-color 0.1s; }
-.typing .c.sp { width: 0.5em; }
+/* letter spans stay inline: an inline-block per letter would break Arabic joining and show isolated forms */
+.typing .c { border-radius: 4px; transition: color 0.1s, background-color 0.1s; }
+.typing .c.sp { display: inline-block; width: 0.5em; }
 .typing .c.ok { color: var(--ok); }
 .typing .c.fixed { color: var(--ok); text-decoration: underline dotted #d98b00; text-underline-offset: 6px; }
 .typing .c.bad { color: var(--bad); text-decoration: underline wavy var(--bad); text-underline-offset: 6px; }
 .typing .c.cur { background: var(--cur); box-shadow: inset 0 -4px 0 var(--red); color: var(--text); animation: caret 1s steps(1) infinite; }
 .typing .c.cur.sp { background: var(--cur); box-shadow: inset 0 -4px 0 var(--red); }
 @keyframes caret { 50% { box-shadow: inset 0 -4px 0 transparent; } }
-.typing .c.shake { animation: shake 0.25s; color: var(--bad); }
-@keyframes shake { 25% { transform: translateX(3px); } 75% { transform: translateX(-3px); } }
+.typing .c.shake { animation: wrong-flash 0.3s; }
+@keyframes wrong-flash { 0%, 100% { background: transparent; } 40% { background: var(--bad-soft); color: var(--bad); } }
 .typing__input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
 .typing__hint { min-height: 1.5em; font-size: 0.95rem; color: var(--text-2); font-weight: 700; padding: 0 4px; }
 .typing__hint.is-warning { color: var(--red-ink); }

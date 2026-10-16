@@ -84,6 +84,17 @@ def run():
         first_key = page.evaluate(f"keyFor({json.dumps(text[0])}).code")
         check("next key highlighted on the keyboard", page.locator(f".k.k-next[data-code='{first_key}']").count() == 1)
         check("keys carry no finger or home-row marking", page.locator(".k[class*='f-'], .k--home").count() == 0)
+        width_gap = page.evaluate("""(() => {
+            const word = document.querySelector('.typing .w');
+            const probe = document.createElement('span');
+            probe.textContent = word.textContent;
+            probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap';
+            word.parentElement.appendChild(probe);
+            const gap = Math.abs(probe.getBoundingClientRect().width - word.getBoundingClientRect().width);
+            probe.remove();
+            return gap;
+        })()""")
+        check("drill letters stay joined (word as wide as plain text)", width_gap < 2)
         page.keyboard.type("x")
         page.wait_for_timeout(150)
         check("wrong letter does not advance (strict)", page.evaluate("app.drill.index") == 0)
