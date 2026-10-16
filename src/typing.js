@@ -22,6 +22,7 @@ class TypingDrill {
     this.compact = compact;
     this.onFinish = onFinish;
     this.index = 0;
+    this.typed = []; // what he actually pressed at each position, for the echo line
     this.errors = [];
     this.wrong = new Set(); // indices typed wrong at least once (lenient mode keeps them red)
     this.startedAt = 0;
@@ -42,11 +43,16 @@ class TypingDrill {
           <span class="typing__errors">أخطاء <b data-err>0</b></span>
         </div>`}
         <div class="typing__text" dir="rtl" role="textbox" aria-label="المكان اللي بتكتب فيه" tabindex="0"></div>
+        ${this.compact ? "" : `<div class="typing__echo" dir="rtl">
+          <span class="typing__echo-label">اللي كتبته لحد دلوقتي</span>
+          <p data-echo aria-live="polite"></p>
+        </div>`}
         <input class="typing__input" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" aria-hidden="true" tabindex="-1">
         <p class="typing__hint" data-hint aria-live="polite"></p>
         ${this.showKeyboard ? '<div class="kbd" data-keyboard aria-hidden="true"></div>' : ""}
       </div>`;
     this.textEl = root.querySelector(".typing__text");
+    this.echoEl = root.querySelector("[data-echo]");
     this.input = root.querySelector(".typing__input");
     this.hintEl = root.querySelector("[data-hint]");
     this.renderText();
@@ -103,6 +109,7 @@ class TypingDrill {
     if (char === "\n" || char === "\r") return;
     const expected = this.chars[this.index];
     if (!this.startedAt) this.start();
+    this.typed[this.index] = char;
 
     if (char === expected || (expected === " " && char === " ")) {
       this.index++;
@@ -184,11 +191,23 @@ class TypingDrill {
     });
     this.spans[this.index]?.scrollIntoView({ block: "nearest", inline: "nearest" });
     this.updateStats();
+    this.renderEcho();
     const next = this.chars[this.index];
     if (!this.hintEl.classList.contains("is-warning")) {
       this.hintEl.textContent = next ? shiftHint(next) : "";
     }
     if (this.showKeyboard) highlightKey(this.root, next);
+  }
+
+  /** The sentence as he has written it so far, in plain running text (wrong letters red in lenient mode). */
+  renderEcho() {
+    if (!this.echoEl) return;
+    const written = this.chars.slice(0, this.index).map((expected, i) => {
+      const char = this.typed[i] ?? expected;
+      return char === expected ? esc(char) : `<b class="bad">${esc(char)}</b>`;
+    }).join("");
+    const caret = this.finished ? "" : '<i class="caret" aria-hidden="true"></i>';
+    this.echoEl.innerHTML = (written || '<span class="typing__echo-empty">هنا هتشوف الجملة اللي بتكتبها، كلمة ورا كلمة</span>') + caret;
   }
 
   finish() {

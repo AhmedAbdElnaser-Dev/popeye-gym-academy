@@ -263,7 +263,7 @@ function renderQuizStep(lesson) {
 function renderTypeStep(lesson) {
   const mobile = coarsePointer();
   return `
-    <p class="step__intro">اكتب الكلام ده زي ما هو. الحرف الصح بيبقى <b class="ok-word">أخضر</b> والغلط <b class="bad-word">أحمر</b>${progress().settings.strict ? "، ومش هتعدي غير لما تصلحه" : ""}.</p>
+    <p class="step__intro">اقرا الكلام ده الأول، وبعدين اكتبه زي ما هو. الحرف الصح بيبقى <b class="ok-word">أخضر</b> والغلط <b class="bad-word">أحمر</b>${progress().settings.strict ? "، ومش هتعدي غير لما تصلحه" : ""}. وتحت النص هتشوف الجملة اللي كتبتها على بعضها.</p>
     ${mobile ? `<p class="note">${ICONS.info} التدريب ده أحسن على كمبيوتر بكيبورد حقيقي. على الموبايل الكيبورد اللي على الشاشة مش هيظهر.</p>` : ""}
     <div data-mount="typing"></div>`;
 }

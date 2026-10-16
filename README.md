@@ -10,7 +10,7 @@ After the first visit it works with no internet and can be installed to the home
 ## What the learner gets
 
 - **5 units, 39 lessons**, 3–8 minutes each: الكتابة (built on his own practice sheet) · عضلاتك · الأجهزة والأدوات · التمارين الأساسية · الأداء الصح.
-- Every lesson: **اقرأ** (photos that animate between start/end position, a body map that lights the muscle) → **اختبر نفسك** (3 questions with the reason) → **اكتب** (copy the text; each letter turns green or red, the on-screen Arabic keyboard shows the next key, strict mode makes him fix a wrong letter before moving on) → **إملاء** (pick the missing letter, then the word hides and he types it from memory).
+- Every lesson: **اقرأ** (photos that animate between start/end position, a body map that lights the muscle) → **اختبر نفسك** (3 questions with the reason) → **اكتب** (copy the text; each letter turns green or red, the sentence he has written so far appears underneath as plain running text, the on-screen Arabic keyboard shows the next key, strict mode makes him fix a wrong letter before moving on) → **إملاء** (pick the missing letter, then the word hides and he types it from memory).
 - **Progress on the device** (`localStorage`): stars per lesson, XP and levels (مبتدئ → أسد), streak, best speed/accuracy, the letters he confuses most (ة/ه، ى/ي، أ/إ…), and a "واقف عند" card on the home page.
 - **No touch-typing.** He types with whatever fingers he likes and may look at the keyboard; the curriculum is about volume: a 1000-letter daily target on the home page, and free practice that chains straight into the next text.
 - **نزّل نسختك**: downloads the whole site as one HTML file with his progress embedded; opening that file anywhere restores it. Settings also import progress from such a file.

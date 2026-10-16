@@ -348,10 +348,17 @@ kbd {
   line-height: 2.1;
   letter-spacing: 0.01em;
   word-spacing: 0.12em;
-  color: #9a8f8b;
+  color: #6e6460;
   cursor: text;
   user-select: none;
 }
+.typing__echo { display: grid; gap: 2px; padding: 10px 18px 12px; background: var(--surface); border: 1px dashed #cfc5c0; border-radius: var(--radius); }
+.typing__echo-label { font-size: 0.78rem; font-weight: 700; color: var(--text-3); }
+.typing__echo p { margin: 0; min-height: 1.9em; font-size: 1.3rem; line-height: 1.9; color: var(--text); white-space: pre-wrap; }
+.typing__echo-empty { color: var(--text-3); font-size: 1rem; }
+.typing__echo .bad { color: var(--bad); text-decoration: underline wavy var(--bad); text-underline-offset: 5px; }
+.typing__echo .caret { display: inline-block; width: 2px; height: 1.1em; vertical-align: -0.2em; margin-inline-start: 1px; background: var(--red); animation: caret-blink 1s steps(1) infinite; }
+@keyframes caret-blink { 50% { opacity: 0; } }
 .typing.is-focused .typing__text { border-color: var(--red); box-shadow: 0 0 0 4px rgb(201 31 24 / 0.1); }
 .typing:not(.is-focused):not(.is-done) .typing__text::after {
   content: "دوس هنا وابدأ اكتب";
@@ -556,6 +563,9 @@ kbd {
   .brand__logo { height: 38px; }
   .topbar { gap: 8px; padding: 0 10px; }
   .typing__text { font-size: 1.45rem; padding: 16px; }
+  /* phone keyboard covers the lower half: keep the written sentence in view above the model text */
+  .typing__bar { order: -2; }
+  .typing__echo { order: -1; }
   .k { height: 40px; font-size: 1rem; }
   .k i { display: none; }
   .stepper a span { display: none; }
@@ -2582,6 +2592,7 @@ class TypingDrill {
     this.compact = compact;
     this.onFinish = onFinish;
     this.index = 0;
+    this.typed = []; // what he actually pressed at each position, for the echo line
     this.errors = [];
     this.wrong = new Set(); // indices typed wrong at least once (lenient mode keeps them red)
     this.startedAt = 0;
@@ -2602,11 +2613,16 @@ class TypingDrill {
           <span class="typing__errors">أخطاء <b data-err>0</b></span>
         </div>`}
         <div class="typing__text" dir="rtl" role="textbox" aria-label="المكان اللي بتكتب فيه" tabindex="0"></div>
+        ${this.compact ? "" : `<div class="typing__echo" dir="rtl">
+          <span class="typing__echo-label">اللي كتبته لحد دلوقتي</span>
+          <p data-echo aria-live="polite"></p>
+        </div>`}
         <input class="typing__input" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" aria-hidden="true" tabindex="-1">
         <p class="typing__hint" data-hint aria-live="polite"></p>
         ${this.showKeyboard ? '<div class="kbd" data-keyboard aria-hidden="true"></div>' : ""}
       </div>`;
     this.textEl = root.querySelector(".typing__text");
+    this.echoEl = root.querySelector("[data-echo]");
     this.input = root.querySelector(".typing__input");
     this.hintEl = root.querySelector("[data-hint]");
     this.renderText();
@@ -2663,6 +2679,7 @@ class TypingDrill {
     if (char === "\n" || char === "\r") return;
     const expected = this.chars[this.index];
     if (!this.startedAt) this.start();
+    this.typed[this.index] = char;
 
     if (char === expected || (expected === " " && char === " ")) {
       this.index++;
@@ -2744,11 +2761,23 @@ class TypingDrill {
     });
     this.spans[this.index]?.scrollIntoView({ block: "nearest", inline: "nearest" });
     this.updateStats();
+    this.renderEcho();
     const next = this.chars[this.index];
     if (!this.hintEl.classList.contains("is-warning")) {
       this.hintEl.textContent = next ? shiftHint(next) : "";
     }
     if (this.showKeyboard) highlightKey(this.root, next);
+  }
+
+  /** The sentence as he has written it so far, in plain running text (wrong letters red in lenient mode). */
+  renderEcho() {
+    if (!this.echoEl) return;
+    const written = this.chars.slice(0, this.index).map((expected, i) => {
+      const char = this.typed[i] ?? expected;
+      return char === expected ? esc(char) : `<b class="bad">${esc(char)}</b>`;
+    }).join("");
+    const caret = this.finished ? "" : '<i class="caret" aria-hidden="true"></i>';
+    this.echoEl.innerHTML = (written || '<span class="typing__echo-empty">هنا هتشوف الجملة اللي بتكتبها، كلمة ورا كلمة</span>') + caret;
   }
 
   finish() {
@@ -3391,7 +3420,7 @@ function renderQuizStep(lesson) {
 function renderTypeStep(lesson) {
   const mobile = coarsePointer();
   return `
-    <p class="step__intro">اكتب الكلام ده زي ما هو. الحرف الصح بيبقى <b class="ok-word">أخضر</b> والغلط <b class="bad-word">أحمر</b>${progress().settings.strict ? "، ومش هتعدي غير لما تصلحه" : ""}.</p>
+    <p class="step__intro">اقرا الكلام ده الأول، وبعدين اكتبه زي ما هو. الحرف الصح بيبقى <b class="ok-word">أخضر</b> والغلط <b class="bad-word">أحمر</b>${progress().settings.strict ? "، ومش هتعدي غير لما تصلحه" : ""}. وتحت النص هتشوف الجملة اللي كتبتها على بعضها.</p>
     ${mobile ? `<p class="note">${ICONS.info} التدريب ده أحسن على كمبيوتر بكيبورد حقيقي. على الموبايل الكيبورد اللي على الشاشة مش هيظهر.</p>` : ""}
     <div data-mount="typing"></div>`;
 }
