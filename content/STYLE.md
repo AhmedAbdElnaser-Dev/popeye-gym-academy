@@ -44,6 +44,7 @@ short typing + spelling drill built from the same words so the gym vocabulary an
 Rules the build enforces:
 - `ex` ids must come from the exercise list given to you (assets/exercises/index.json).
 - `typing` may contain only Arabic letters, spaces, digits, `،` `.` `؟` `:` `؛` and `-` between digits. No tashkeel, no Latin, no brackets, no quotes.
+- No touch-typing: never say which finger presses what, never mention a home row, never ask him not to look at the keyboard. He types with any fingers; the goal is volume (يكتب كتير), not technique.
 - `spelling[i].blank` is the 0-based index of the tested letter in `word`; `choices` (2-3) must include that letter and be distinct.
   Test the letters he actually confuses: ة/ه at word end, ى/ي, أ/ا/إ, ض/ظ, ذ/ز, ث/س, ص/س, ق/ك, ئ/ء/ؤ. Words come from the lesson.
 - `quiz[i].answer` is a valid index; `why` explains in one friendly line.

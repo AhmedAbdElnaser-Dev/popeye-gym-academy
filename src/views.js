@@ -90,6 +90,7 @@ function renderHome() {
   const started = Object.keys(data.lessons).length > 0;
   const doneCount = LESSON_INDEX.order.filter((id) => lessonDone(id)).length;
   const confusions = worstConfusions(4);
+  const chars = charsToday();
 
   return `
   <section class="hero">
@@ -118,6 +119,11 @@ function renderHome() {
     ${progressBar(level.ratio, "التقدم للمستوى الجاي")}
     <span>${level.next ? `${level.next.xp - xp} نقطة على <b>${esc(level.next.name)}</b>` : "أعلى مستوى 🦁"}</span>
   </div>
+  <div class="level level--daily">
+    <span>كتبت النهارده <b>${chars}</b> حرف</span>
+    ${progressBar(Math.min(1, chars / DAILY_CHARS_TARGET), "هدف النهارده")}
+    <span>${chars >= DAILY_CHARS_TARGET ? "الهدف اتحقق 🔥 كمّل براحتك" : `الهدف <b>${DAILY_CHARS_TARGET}</b> حرف`}</span>
+  </div>
 
   <section class="units">
     <h2 class="h2">الوحدات</h2>
@@ -137,7 +143,7 @@ function renderHome() {
   <section class="home__row">
     <div class="card">
       <h2 class="h2">${ICONS.keyboard} تدريب حر</h2>
-      <p>اكتب نصوص ورقة التدريب بتاعتك أو أي درس، في أي وقت.</p>
+      <p>نصوص ورقتك وكل الدروس، نص ورا نص. الهدف ${DAILY_CHARS_TARGET} حرف كل يوم.</p>
       <a class="btn btn--ghost" href="#/practice">افتح التدريب الحر ${ICONS.next}</a>
     </div>
     <div class="card">
@@ -237,7 +243,7 @@ function renderSection(section) {
 function renderReadStep(lesson) {
   const hero = lesson.hero ? exerciseFigure(lesson.hero.ex, { caption: lesson.hero.caption, size: "ex--hero" }) : "";
   const map = lesson.muscles?.length ? `<div class="sec sec--map"><h2>مكانها في جسمك</h2>${renderBodyMap(lesson.muscles)}</div>` : "";
-  const keyboard = lesson.keyboardRow !== undefined ? `<div class="sec"><h2>شوف الصف على الكيبورد</h2><div class="kbd kbd--static" data-static-keyboard="${lesson.keyboardRow}"></div></div>` : "";
+  const keyboard = lesson.keyboardRow !== undefined ? `<div class="sec"><h2>شوف الحروف على الكيبورد</h2><div class="kbd kbd--static" data-static-keyboard="${lesson.keyboardRow}"></div></div>` : "";
   const liveMap = lesson.bodyMap ? `<div class="sec sec--map"><h2>دوس على أي عضلة</h2>${renderBodyMap([], { interactive: true })}<div class="muscle-info" data-muscle-info><b>دوس على عضلة في الرسمة</b><span>هنقولك اسمها ومكانها وبتعمل إيه.</span></div></div>` : "";
   return `
     <article class="read">
@@ -338,7 +344,7 @@ function renderPractice(textId) {
   if (!picked) {
     return `
     <nav class="crumbs"><a href="#/">${ICONS.home} الرئيسية</a><span>›</span><span>تدريب حر</span></nav>
-    <header class="lesson-head"><h1>تدريب حر</h1><p>اختار نص واكتبه. كل محاولة بتتحسب في تقدمك.</p></header>
+    <header class="lesson-head"><h1>تدريب حر</h1><p>اختار نص واكتبه، ولما تخلص دوس على النص اللي بعده. كل حرف بيتحسب في هدف النهارده.</p></header>
     <div class="practice-pick">
       <a class="pick pick--hard" href="#/practice/hard"><b>كلمات بتلخبطك</b><span>كلمات فيها الحروف اللي بتغلط فيها أكتر</span></a>
       ${groups.map((group) => `<h2 class="h2">${esc(group)}</h2><div class="pick-grid">${texts.filter((item) => item.group === group).map((item) => {
@@ -369,7 +375,7 @@ function renderSettings() {
     <section class="card">
       <h2 class="h2">الكتابة</h2>
       ${toggle("strict", "ما تعديش الغلط", "الحرف الغلط بيوقفك لحد ما تصلحه. أحسن للإملاء.")}
-      ${toggle("keyboard", "اعرض الكيبورد على الشاشة", "بيوريك الزرار الجاي والصباع اللي يدوس عليه.")}
+      ${toggle("keyboard", "اعرض الكيبورد على الشاشة", "بيوريك الزرار الجاي بالأحمر، وإمتى تدوس شيفت.")}
       ${toggle("sound", "اسمع الكلمة في الإملاء", "لو جهازك فيه صوت عربي.")}
       ${toggle("bigText", "خط أكبر", "لكل الموقع.")}
     </section>

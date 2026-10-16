@@ -392,12 +392,6 @@ kbd {
 .k i { position: absolute; top: 3px; right: 5px; font-size: 0.6rem; font-style: normal; color: var(--text-3); }
 .k--special { font-size: 0.85rem; color: var(--text-3); }
 .k--special b { font-weight: 700; }
-.k--home::after { content: ""; position: absolute; bottom: 4px; width: 10px; height: 3px; border-radius: 2px; background: #c9bdb8; }
-.k.f-l-pinky, .k.f-r-pinky { background: #fdf3e1; }
-.k.f-l-ring, .k.f-r-ring { background: #ecf5e6; }
-.k.f-l-middle, .k.f-r-middle { background: #e6f0fb; }
-.k.f-l-index, .k.f-r-index { background: #f7e9f6; }
-.k.f-thumb { background: #f1ede9; }
 .k.k-next { background: var(--red); color: #fff; border-color: var(--red-hover); transform: translateY(-2px) scale(1.06); box-shadow: 0 6px 14px rgb(201 31 24 / 0.4); z-index: 1; }
 .k.k-next i { color: #fff; }
 .k.k-shift { background: var(--dark); color: #fff; border-color: #000; }

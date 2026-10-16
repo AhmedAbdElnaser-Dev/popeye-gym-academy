@@ -69,10 +69,13 @@ function mountComponents(route) {
       onFinish: (stats) => {
         recordTyping(recordId, stats);
         const here = location.hash;
+        // free practice chains straight into the next text so a session keeps going
+        const chain = practiceTexts();
+        const after = isPractice ? chain[chain.findIndex((item) => item.id === route.a) + 1] : null;
         typingMount.insertAdjacentHTML("beforeend", typingResult(stats, {
           retryHref: here,
-          nextHref: isPractice ? "#/practice" : `#/lesson/${route.a}/spell`,
-          nextLabel: isPractice ? "نص تاني" : "يلا الإملاء",
+          nextHref: isPractice ? (after ? `#/practice/${after.id}` : "#/practice") : `#/lesson/${route.a}/spell`,
+          nextLabel: isPractice ? (after ? `اللي بعده: ${esc(after.title)}` : "رجوع للنصوص") : "يلا الإملاء",
           lessonId: recordId,
         }));
         typingMount.querySelector(".result")?.scrollIntoView({ behavior: "smooth", block: "center" });

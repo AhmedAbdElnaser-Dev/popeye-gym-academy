@@ -12,6 +12,7 @@ const LEVELS = [
 ];
 const TYPING_STAR_ACCURACY = { two: 95, three: 98 };
 const TYPING_STAR_CPM = 60;
+const DAILY_CHARS_TARGET = 1000;
 
 const progressState = { data: null, listeners: new Set() };
 
@@ -113,10 +114,11 @@ function lessonRecord(id) {
   return data.lessons[id];
 }
 
-function addXp(data, amount, minutes = 0) {
-  const day = (data.days[todayKey()] ??= { xp: 0, minutes: 0 });
+function addXp(data, amount, minutes = 0, chars = 0) {
+  const day = (data.days[todayKey()] ??= { xp: 0, minutes: 0, chars: 0 });
   day.xp += amount;
   day.minutes += minutes;
+  day.chars = (day.chars || 0) + chars;
 }
 
 function recordRead(id) {
@@ -160,7 +162,7 @@ function recordTyping(id, stats) {
       attempts: (record.typing?.attempts ?? 0) + 1,
       at: new Date().toISOString(),
     };
-    addXp(data, (record.typing.attempts === 1 ? XP.typingFinish : 0) + Math.max(0, stars - previousStars) * XP.typingStar, Math.max(1, Math.round(stats.seconds / 60)));
+    addXp(data, (record.typing.attempts === 1 ? XP.typingFinish : 0) + Math.max(0, stars - previousStars) * XP.typingStar, Math.max(1, Math.round(stats.seconds / 60)), stats.length);
     for (const { expected, typed } of stats.errors) {
       data.keyErrors[expected] = (data.keyErrors[expected] || 0) + 1;
       if (typed && /[؀-ۿ]/.test(typed)) {
@@ -262,6 +264,10 @@ function recentTyping(limit = 12) {
 
 function worstConfusions(limit = 5) {
   return Object.entries(progressState.data.confusions).sort((a, b) => b[1] - a[1]).slice(0, limit);
+}
+
+function charsToday() {
+  return progressState.data.days[todayKey()]?.chars || 0;
 }
 
 function totalMinutes() {

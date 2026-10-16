@@ -186,7 +186,7 @@ class TypingDrill {
     this.updateStats();
     const next = this.chars[this.index];
     if (!this.hintEl.classList.contains("is-warning")) {
-      this.hintEl.textContent = next ? fingerHint(next) : "";
+      this.hintEl.textContent = next ? shiftHint(next) : "";
     }
     if (this.showKeyboard) highlightKey(this.root, next);
   }
@@ -220,11 +220,10 @@ class TypingDrill {
 function renderKeyboard(container) {
   container.innerHTML = KEY_ROWS.map((row) => `<div class="kbd__row">${row.map(([code, base, shifted]) => {
     const width = WIDE_KEYS[code] || 1;
-    const finger = FINGER_OF_KEY[code] || "";
     const special = base.length > 1 || base === "⇧" || base === "⌫" || base === "⏎" || base === "⇥" || base === "⇪";
     const label = code === "Space" ? "مسافة" : base;
     const sub = shifted && !special && [...shifted].length === 1 && !/[ً-ْ]/.test(shifted) ? shifted : "";
-    return `<span class="k${special ? " k--special" : ""}${HOME_ROW_KEYS.has(code) ? " k--home" : ""} f-${finger}" data-code="${code}" style="--w:${width}">
+    return `<span class="k${special ? " k--special" : ""}" data-code="${code}" style="--w:${width}">
       <b>${esc(label)}</b>${sub ? `<i>${esc(sub)}</i>` : ""}</span>`;
   }).join("")}</div>`).join("");
 }
@@ -235,7 +234,6 @@ function highlightKey(root, char) {
   if (!key) return;
   root.querySelector(`.k[data-code="${key.code}"]`)?.classList.add("k-next");
   if (key.shift) {
-    const leftHand = (FINGER_OF_KEY[key.code] || "").startsWith("l-");
-    root.querySelector(`.k[data-code="${leftHand ? "ShiftRight" : "ShiftLeft"}"]`)?.classList.add("k-shift");
+    root.querySelector(`.k[data-code="${isLeftHalf(key.code) ? "ShiftRight" : "ShiftLeft"}"]`)?.classList.add("k-shift");
   }
 }
